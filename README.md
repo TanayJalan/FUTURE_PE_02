@@ -136,11 +136,121 @@ Tech Stack :
 -No external dependencies required
 
 
+FastAPI Service
+
+This project is also available as a **FastAPI-based backend service**, exposing the full
+**Input → LLM → Output Guardrails pipeline** via REST APIs.
+
+---
+
+### Run the API Locally
+
+Make sure your virtual environment is activated, then run:
+
+```bash
+pip install fastapi uvicorn
+python -m uvicorn api:app --reload
+The service will start at:
+
+cpp
+Copy code
+http://127.0.0.1:8000
+API Documentation
+FastAPI provides automatic interactive documentation.
+
+Open in browser:
+
+arduino
+Copy code
+http://127.0.0.1:8000/docs
+🩺 Health Check
+Endpoint
+
+
+Copy code
+GET /health
+Response
+
+
+Copy code
+{
+  "status": "ok"
+}
+🛡️ Guarded Chat API
+Runs the full guardrails + hallucination control pipeline.
+
+Endpoint
+
+bash
+Copy code
+POST /guarded-chat
+Request Body
+
+json
+Copy code
+{
+  "prompt": "Will AI replace jobs?"
+}
+
+Example Response (Safe Input)
+
+json
+Copy code
+{
+  "final_action": "Action.ALLOW",
+  "confidence": 1.0,
+  "response": "AI is a branch of computer science.",
+  "details": []
+}
+
+Example Response (Hallucination Detected)
+json
+Copy code
+{
+  "final_action": "Action.REWRITE",
+  "confidence": 0.6,
+  "response": " Note: I may be mistaken, but based on general knowledge...",
+  "details": [
+    "HallucinationDetectionRule..."
+  ]
+}
+
+Example Response (Blocked Input)
+
+json
+Copy code
+{
+  "final_action": "Action.BLOCK",
+  "confidence": 0.0,
+  "response": "Input blocked by safety guardrails"
+}
+
+
+Model Agnostic Design
+The API currently uses a mock LLM for demonstration.
+
+You can easily replace it with:
+
+OpenAI
+Gemini
+Claude
+Local LLMs
+
+Only the llm_callable needs to be swapped.
+
+Use Cases
+-AI safety middleware
+-Prompt injection prevention
+-Hallucination-aware AI assistants
+-Enterprise LLM orchestration
+-Educational & research projects
+
+
+
 Future Improvements :
 -Tool-based fact verification
 -Model confidence calibration
 -Token-level hallucination analysis
--FastAPI deployment
 -Logging & monitoring dashboards
 
 
